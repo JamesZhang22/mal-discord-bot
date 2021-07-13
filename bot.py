@@ -3,6 +3,9 @@ import os
 import discord
 from dotenv import load_dotenv
 
+intents = discord.Intents(members=True)
+client = discord.Client(intents=intents)
+
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
@@ -14,9 +17,7 @@ async def on_ready():
 
 @client.event
 async def on_member_join(member):
-    await member.create_dm()
-    await member.dm_channel.send(
-        f'Hi {member.name}, welcome to my Discord server!'
-    )
+    print(member.name)
+    await member.send(f'Welcome {member.name} to the server!')
 
 client.run(TOKEN)
