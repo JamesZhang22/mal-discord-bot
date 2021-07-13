@@ -46,5 +46,5 @@ def get_anime_stats(name: str) -> str:
     return name, rating, rank, popularity, episodes, genres, similars
 
 
-example = get_anime_stats('Cowboy_Bebop')
-print(example)
+# example = get_anime_stats('Cowboy_Bebop')
+# print(example)
