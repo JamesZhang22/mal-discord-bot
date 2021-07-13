@@ -26,7 +26,8 @@ def get_anime_stats(name: str) -> str:
     soup = BeautifulSoup(page.content, "html.parser")
     results = soup.find(id="content")
 
-    rating = results.find("div", class_="score-label score-8").text
+    rating_wrapper = results.find("div", class_="fl-l score")
+    rating = rating_wrapper.find("div").text
     rank_wrapper = results.find("span", class_="numbers ranked")
     rank = rank_wrapper.find("strong").text
     popularity_wrapper = results.find("span", class_="numbers popularity")
@@ -38,13 +39,16 @@ def get_anime_stats(name: str) -> str:
         if genre.text.lower() in all_genres:
             genres.append(genre.text)
     similars = []
-    similar_shows_wrapper = results.find("ul", class_="anime-slide js-anime-slide")
-    similar_shows = similar_shows_wrapper.find_all("li", class_="btn-anime")
+    similar_shows_wrapper = results.find_all("ul", class_="anime-slide js-anime-slide")
+    for similar_show_wrapper in similar_shows_wrapper:
+        if similar_show_wrapper['data-slide'] == "7":
+            true_similar_shows_wrapper = similar_show_wrapper
+    similar_shows = true_similar_shows_wrapper.find_all("li", class_="btn-anime")
     for show in similar_shows:
         similars.append(show['title'])
 
     return name, rating, rank, popularity, episodes, genres, similars
 
 
-# example = get_anime_stats('Cowboy_Bebop')
-# print(example)
+example = get_anime_stats('Naruto')
+print(example)
