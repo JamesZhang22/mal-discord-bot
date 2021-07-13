@@ -17,6 +17,7 @@ def create_dict_of_name_id() -> Dict[int, str]:
     return name_id_dict
 
 name_id = create_dict_of_name_id()
+all_genres = ['action', 'adventure', 'cars', 'comedy', 'dementia', 'demons', 'drama', 'ecchi', 'fantasy', 'game', 'harem', 'hentai', 'historical', 'horror', 'josei', 'kids', 'magic', 'martial arts', 'mecha', ' military', 'music', 'mystery', 'parody', 'police', 'psychological', 'romance', 'samurai', 'school', 'sci-fi', 'seinen', 'shoujo', 'shoujo ai', 'shounen', 'shounen ai', 'slice of life', 'space', 'sports', 'super power', 'supernatural', 'thriller', 'vampire', 'yoai', 'yuri']
 
 
 def get_anime_stats(name: str) -> str:
@@ -30,8 +31,19 @@ def get_anime_stats(name: str) -> str:
     rank = rank_wrapper.find("strong").text
     popularity_wrapper = results.find("span", class_="numbers popularity")
     popularity = popularity_wrapper.find("strong").text
+    episodes = results.find("div", class_="spaceit").text.replace("\n", "").replace(" ", "").replace("Episodes:", "")
+    genres_wrapper = results.find_all("a")
+    genres = []
+    for genre in genres_wrapper:
+        if genre.text.lower() in all_genres:
+            genres.append(genre.text)
+    similars = []
+    similar_shows_wrapper = results.find("ul", class_="anime-slide js-anime-slide")
+    similar_shows = similar_shows_wrapper.find_all("li", class_="btn-anime")
+    for show in similar_shows:
+        similars.append(show['title'])
 
-    return rating, rank, popularity
+    return name, rating, rank, popularity, episodes, genres, similars
 
 
 example = get_anime_stats('Cowboy_Bebop')
