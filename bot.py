@@ -26,11 +26,13 @@ async def on_member_join(member):
 @bot.command(name="ranime", help="Recommends a random show.")
 async def ranime(ctx):
     reply = random.choice(list(name_id.keys()))
-    await ctx.send(reply)
+    await ctx.send(f"{reply}: https://myanimelist.net/anime/{name_id[reply]}")
 
 @bot.command(name="details", help="Display show stats on myanimelist.")
 async def details(ctx, *show: str):
-    show_name = ''.join(show)
+    show = str(show)
+    show_name = show.replace(', ', ' ').replace("'", '').replace('(', '').replace(')', '').lower()
+    print(show_name)
     reply = get_anime_stats(show_name)
     await ctx.send(reply)
 
