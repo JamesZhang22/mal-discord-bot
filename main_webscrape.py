@@ -12,11 +12,12 @@ def create_dict_of_name_id() -> Dict[int, str]:
         link = str(element.find("loc"))
         new = link.replace("<loc>https://myanimelist.net/anime/", '').replace("</loc>", '').replace("/", ", ")
         new_split = new.split(', ')
-        name_id_dict[new_split[1]] = new_split[0]
+        name_id_dict[new_split[1].replace("__", ": ").replace("_", " ").lower()] = new_split[0]
 
     return name_id_dict
 
 name_id = create_dict_of_name_id()
+
 all_genres = ['action', 'adventure', 'cars', 'comedy', 'dementia', 'demons', 'drama', 'ecchi', 'fantasy', 'game', 'harem', 'hentai', 'historical', 'horror', 'josei', 'kids', 'magic', 'martial arts', 'mecha', ' military', 'music', 'mystery', 'parody', 'police', 'psychological', 'romance', 'samurai', 'school', 'sci-fi', 'seinen', 'shoujo', 'shoujo ai', 'shounen', 'shounen ai', 'slice of life', 'space', 'sports', 'super power', 'supernatural', 'thriller', 'vampire', 'yoai', 'yuri']
 
 
@@ -50,5 +51,6 @@ def get_anime_stats(name: str) -> str:
     return name, rating, rank, popularity, episodes, genres, similars
 
 
-example = get_anime_stats('Naruto')
-print(example)
+# example = get_anime_stats('Naruto')
+# print(example)
+# print(name_id)
