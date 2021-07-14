@@ -27,6 +27,8 @@ def get_anime_stats(name: str) -> str:
     soup = BeautifulSoup(page.content, "html.parser")
     results = soup.find(id="content")
 
+    name_wrapper = soup.find("div", class_="h1-title")
+    true_name = name_wrapper.find("strong").text
     rating_wrapper = results.find("div", class_="fl-l score")
     rating = rating_wrapper.find("div").text
     rank_wrapper = results.find("span", class_="numbers ranked")
@@ -47,8 +49,11 @@ def get_anime_stats(name: str) -> str:
     similar_shows = true_similar_shows_wrapper.find_all("li", class_="btn-anime")
     for show in similar_shows:
         similars.append(show['title'])
+    img_wrapper = results.find("img", alt=true_name)
+    img_url= img_wrapper['data-src']
 
-    return name, rating, rank, popularity, episodes, genres, similars
+
+    return true_name, rating, rank, popularity, episodes, genres, similars, img_url
 
 
 def get_genre_list(genre: str) -> List[str]:
