@@ -60,7 +60,7 @@ async def ranime(ctx, genre=None):
             reply = random.choice(get_genre_list(genre.lower())).replace("!", "")
             embed = discord.Embed(title=f"Anime: {reply.capitalize()}", color=discord.Color.blue())
             embed.set_author(name=f"Genre: {genre.capitalize()}")
-            embed.set_thumbnail(url="https://i.pinimg.com/originals/5b/b4/8b/5bb48b07fa6e3840bb3afa2bc821b882.jpg")
+            embed.set_thumbnail(url=get_anime_stats(reply.lower())[7])
             embed.add_field(name="Link", value=f"https://myanimelist.net/anime/{name_id[reply.lower()]}", inline=False)
 
             await ctx.send(embed=embed)
@@ -71,7 +71,6 @@ async def ranime(ctx, genre=None):
 async def details(ctx, *show: str):
     show = str(show)
     show_name = show.replace(', ', ' ').replace("'", '').replace('(', '').replace(')', '').lower()
-    print(show_name)
     reply = get_anime_stats(show_name)
     await ctx.send(reply)
 
