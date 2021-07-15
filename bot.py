@@ -1,6 +1,6 @@
 import os
 import random
-
+import youtube_dl
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -13,6 +13,7 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 intents = discord.Intents().all()
 activity = discord.Game(name="?help")
 bot = commands.Bot(command_prefix='?', intents=intents, activity=activity, help_command=None)
+players = {}
 
 # Basic Event Handling
 @bot.event
@@ -51,6 +52,67 @@ async def ping(ctx):
 # @commands.has_role("dj")
 async def clear(ctx, amt=5):
     await ctx.channel.purge(limit=amt)
+
+# Music Commands
+@bot.command(help="Play a video from youtube.")
+async def play(ctx, url: str):
+    if url == 'duck':
+        url = "https://www.youtube.com/watch?v=3flILVgNIi0&ab_channel=Kiddopedia"
+    song_there = os.path.isfile("song.mp3")
+    try:
+        if song_there:
+            os.remove("song.mp3")
+    except PermissionError:
+        await ctx.send("Wait for the current playing music to end or use the 'stop' command")
+        return
+
+    voiceChannel = discord.utils.get(ctx.guild.voice_channels, name='General')
+    await voiceChannel.connect()
+    voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
+    }
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([url])
+    for file in os.listdir("./"):
+        if file.endswith(".mp3"):
+            os.rename(file, "song.mp3")
+    voice.play(discord.FFmpegPCMAudio("song.mp3"))
+
+@bot.command(help="Disconnect bot from voice channel.")
+async def leave(ctx):
+    voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    if voice.is_connected():
+        await voice.disconnect()
+    else:
+        await ctx.send("The bot is not connected to a voice channel.")
+
+@bot.command(help="Pause the current video playing.")
+async def pause(ctx):
+    voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    if voice.is_playing():
+        voice.pause()
+    else:
+        await ctx.send("Currently no audio is playing.")
+
+@bot.command(help="Resume the current video playing.")
+async def resume(ctx):
+    voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    if voice.is_paused():
+        voice.resume()
+    else:
+        await ctx.send("The audio is not paused.")
+
+@bot.command(help="Stop the video.")
+async def stop(ctx):
+    voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    voice.stop()
 
 # Anime Commands
 @bot.command(help="8ball for whether or not you should watch a show!")
