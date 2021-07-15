@@ -42,6 +42,7 @@ def get_anime_stats(name: str) -> str:
     for genre in genres_wrapper:
         if genre.text.lower() in all_genres:
             genres.append(genre.text)
+    genres = ', '.join(genres)
     similars = []
     similar_shows_wrapper = results.find_all("ul", class_="anime-slide js-anime-slide")
     for similar_show_wrapper in similar_shows_wrapper:
@@ -53,11 +54,13 @@ def get_anime_stats(name: str) -> str:
             similar_shows = true_similar_shows_wrapper.find_all("li", class_="btn-anime auto")
     for show in similar_shows:
         similars.append(show['title'])
+    similars = ', '.join(similars)
     img_wrapper = results.find("img", alt=true_name)
     img_url= img_wrapper['data-src']
+    desc = results.find("p", itemprop="description").text.replace("\n", '').replace("\r", '').replace("[Written by MAL Rewrite]", '')
 
 
-    return true_name, rating, rank, popularity, episodes, genres, similars, img_url
+    return true_name, rating, rank, popularity, episodes, genres, similars, img_url, desc, url
 
 
 def get_genre_list(genre: str) -> List[str]:
