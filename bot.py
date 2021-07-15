@@ -47,7 +47,7 @@ async def help(ctx, cmd=None):
 async def ping(ctx):
     await ctx.send(f"Pong!\n{round(bot.latency*1000)}ms")
 
-@bot.command(help="Clear chat")
+@bot.command(help="Clear chat (can pass in optional value for # of messages).")
 # @commands.has_role("dj")
 async def clear(ctx, amt=5):
     await ctx.channel.purge(limit=amt)
@@ -58,7 +58,7 @@ async def watch(ctx, *question):
     responses = ['Yes', 'Definetly', 'No', 'NO!', 'Perhaps', 'Go for it!', 'Nah', 'In a week', 'NEVER!', 'WATCH IT RIGHT NOW!']
     await ctx.send(f"Show: {''.join(question)}\nAnswer: {random.choice(responses)}")
 
-@bot.command(help="Recommends a random show(can pass in one genre).")
+@bot.command(help="Recommends a random show (can pass in one genre).")
 async def ranime(ctx, genre=None):
     reply = random.choice(list(name_id.keys())).replace("!", "").replace("/", '').replace("(", '').replace(")", '')
     if not genre:
