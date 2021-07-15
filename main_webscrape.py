@@ -22,6 +22,7 @@ all_genres = ['action', 'adventure', 'cars', 'comedy', 'dementia', 'demons', 'dr
 
 
 def get_anime_stats(name: str) -> str:
+    name = name.replace("(", '').replace(")", '')
     url = "https://myanimelist.net/anime/" + str(name_id[name])
     page = requests.get(url)
     soup = BeautifulSoup(page.content, "html.parser")
