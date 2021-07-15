@@ -22,7 +22,7 @@ all_genres = ['action', 'adventure', 'cars', 'comedy', 'dementia', 'demons', 'dr
 
 
 def get_anime_stats(name: str) -> str:
-    name = name.replace("(", '').replace(")", '')
+    name = name.replace("(", '').replace(")", '').lower()
     url = "https://myanimelist.net/anime/" + str(name_id[name])
     page = requests.get(url)
     soup = BeautifulSoup(page.content, "html.parser")
@@ -47,7 +47,10 @@ def get_anime_stats(name: str) -> str:
     for similar_show_wrapper in similar_shows_wrapper:
         if similar_show_wrapper['data-slide'] == "7":
             true_similar_shows_wrapper = similar_show_wrapper
-    similar_shows = true_similar_shows_wrapper.find_all("li", class_="btn-anime")
+            similar_shows = true_similar_shows_wrapper.find_all("li", class_="btn-anime")
+        elif similar_show_wrapper['data-slide'] == "8":
+            true_similar_shows_wrapper = similar_show_wrapper
+            similar_shows = true_similar_shows_wrapper.find_all("li", class_="btn-anime auto")
     for show in similar_shows:
         similars.append(show['title'])
     img_wrapper = results.find("img", alt=true_name)
