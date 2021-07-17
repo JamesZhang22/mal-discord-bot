@@ -33,6 +33,7 @@ async def help(ctx, cmd=None):
         embed = discord.Embed(title="MALBOT'S COMMANDS!", color=discord.Color.blue())
         embed.add_field(name="Anime Commands", value="?watch\n?ranime\n?details")
         embed.add_field(name="Basic Commands", value="?ping\n?clear")
+        embed.add_field(name="Music Commands", value="?play\n?leave\n?pause\n?resume\n?stop")
         embed.add_field(name="For More Details", value="?help <command name>", inline=False)
     elif cmd in commands:
         embed = discord.Embed(color=discord.Color.blue())
