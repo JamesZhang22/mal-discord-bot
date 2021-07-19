@@ -47,7 +47,14 @@ async def help(ctx, cmd=None):
 # Basic Commands
 @bot.command(help="Get bot's latency in milliseconds.")
 async def ping(ctx):
-    await ctx.send(f"Pong!\n{round(bot.latency*1000)}ms")
+    ms = round(bot.latency*1000)
+    if ms < 51:
+        embed = discord.Embed(title="Pong", description = str(ms) + 'ms', color=discord.Color.green())
+    elif 51 < ms < 150:
+        embed = discord.Embed(title="Pong", description = str(ms) + 'ms', color=discord.Color.from_rgb(255, 255, 0))
+    else:
+        embed = discord.Embed(title="Pong", description = str(ms) + 'ms', color=discord.Color.red())
+    await ctx.send(embed=embed)
 
 @bot.command(help="Clear chat (can pass in optional value for # of messages).")
 # @commands.has_role("dj")
@@ -158,7 +165,9 @@ async def details(ctx, *show: str):
     embed.add_field(name="Link", value=reply[9], inline=False)
     await ctx.send(embed=embed)
 
-
+@bot.command(help="Display the user's anime list.")
+async def user(ctx, name: str):
+    pass
 
 
 bot.run(TOKEN)
