@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 
 def create_dict_of_name_id() -> Dict[int, str]:
@@ -21,7 +21,7 @@ name_id = create_dict_of_name_id()
 all_genres = ['action', 'adventure', 'cars', 'comedy', 'dementia', 'demons', 'drama', 'ecchi', 'fantasy', 'game', 'harem', 'hentai', 'historical', 'horror', 'josei', 'kids', 'magic', 'martial arts', 'mecha', 'military', 'music', 'mystery', 'parody', 'police', 'psychological', 'romance', 'samurai', 'school', 'sci-fi', 'seinen', 'shoujo', 'shoujo ai', 'shounen', 'shounen ai', 'slice of life', 'space', 'sports', 'super power', 'supernatural', 'thriller', 'vampire', 'yoai', 'yuri']
 
 
-def get_anime_stats(name: str) -> str:
+def get_anime_stats(name: str) -> Tuple[str]:
     name = name.replace("(", '').replace(")", '').lower()
     url = "https://myanimelist.net/anime/" + str(name_id[name])
     page = requests.get(url)
@@ -123,3 +123,12 @@ def get_genre_list(genre: str) -> List[str]:
         shows.append(link.text)
 
     return shows
+
+
+def get_user_stats(name: str) -> Tuple[str]:
+    url = "https://myanimelist.net/profile" + name
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, "html.parser")
+    results = soup.find(id="content")
+
+    
