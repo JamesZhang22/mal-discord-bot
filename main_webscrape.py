@@ -125,10 +125,38 @@ def get_genre_list(genre: str) -> List[str]:
     return shows
 
 
-def get_user_stats(name: str) -> Tuple[str]:
-    url = "https://myanimelist.net/profile" + name
+def get_user(name: str) -> Tuple[str]:
+    url = "https://myanimelist.net/profile/" + name
     page = requests.get(url)
     soup = BeautifulSoup(page.content, "html.parser")
-    results = soup.find(id="content")
+    results = soup.find(id="contentWrapper")
 
+    name = results.find("span", class_="di-ib po-r")
+    if not name:
+        return False
+    else:
+        name = results.find("span", class_="di-ib po-r").text.replace("\n", '').strip()
+    image_wrapper = results.find("div", class_="user-image mb8")
+    image_url = image_wrapper.find("img")["data-src"]
+    online_joined_wrapper = results.find("ul", class_="user-status border-top pb8 mb4")
+    online_joined_li = online_joined_wrapper.find_all("span")
+    online = online_joined_li[1].text
+    joined = online_joined_li[3].text
+    infotexts = {}
+    infotext_wrapper = results.find("ul", class_="user-status border-top mt12 mb12")
+    infotext_details = infotext_wrapper.find_all("li", class_="link")
+    for infotext in infotext_details:
+        key = infotext.find("span", class_="user-status-title di-ib fl-l fw-b").text
+        val = infotext.find("span", class_="user-status-title di-ib fl-r fw-b")
+        if not val:
+            infotexts[key] = 0
+        else:
+            infotexts[key] = val.text
+    friends = results.find("a", class_="fl-r fs11 fw-n ff-Verdana").text.replace("All (", "").replace(")", "")
+
+
+    return name, image_url, online, joined, infotexts, friends, url
+
+
+# print(get_user("klu26dsadw"))
     

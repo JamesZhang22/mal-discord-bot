@@ -165,9 +165,23 @@ async def details(ctx, *show: str):
     embed.add_field(name="Link", value=reply[9], inline=False)
     await ctx.send(embed=embed)
 
-@bot.command(help="Display the user's anime list.")
+@bot.command(help="Display the user general information.")
 async def user(ctx, name: str):
-    pass
+    reply = get_user(name)
+    if not reply:
+        embed = discord.Embed(title='Invalid User', color=discord.Color.red())
+    else:
+        embed = discord.Embed(title=reply[0], color=discord.Color.blue())
+        embed.set_thumbnail(url=reply[1])
+        embed.set_author(name=f"Last Online: {reply[2]}\nJoined: {reply[3]}")
+        embed.add_field(name="Forum Posts", value=reply[4]["Forum Posts"])
+        embed.add_field(name="Reviews", value=reply[4]["Reviews"])
+        embed.add_field(name="Recommendations", value=reply[4]["Recommendations"])
+        embed.add_field(name="Blog Posts", value=reply[4]["Blog Posts"])
+        embed.add_field(name="Clubs", value=reply[4]["Clubs"])
+        embed.add_field(name="Friends", value=reply[5])
+        embed.add_field(name="\u200b", value=reply[6], inline=False)
+    await ctx.send(embed=embed)
 
 
 bot.run(TOKEN)
