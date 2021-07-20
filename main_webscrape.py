@@ -142,7 +142,6 @@ def get_user(name: str) -> Tuple:
     online_joined_wrapper = results.find("ul", class_="user-status border-top pb8 mb4")
     online_joined_li = online_joined_wrapper.find_all("span")
     online = online_joined_li[1].text
-    joined = online_joined_li[3].text
     infotexts = {}
     infotext_wrapper = results.find("ul", class_="user-status border-top mt12 mb12")
     infotext_details = infotext_wrapper.find_all("li", class_="link")
@@ -168,6 +167,7 @@ def get_user_anime_stats(name: str) -> Tuple:
     stats_container = results.find("div", class_="stats anime")
     if not stats_container:
         return False
+    name = results.find("span", class_="di-ib po-r").text.replace("\n", '').strip()
     image_wrapper = results.find("div", class_="user-image mb8")
     image_url = image_wrapper.find("img")["data-src"]
     entries_container = stats_container.find("ul", class_="stats-data fl-r")
@@ -181,7 +181,7 @@ def get_user_anime_stats(name: str) -> Tuple:
     shows = []
     favorites_wrapper = results.find("ul", class_="favorites-list anime")
     if not favorites_wrapper:
-        shows = False
+        shows = []
     else:
         favorite_shows = favorites_wrapper.find_all("li", class_="list di-t mb8")
         for show in favorite_shows:
@@ -189,7 +189,7 @@ def get_user_anime_stats(name: str) -> Tuple:
             show_name = show_container.find("a").text
             shows.append(show_name)
 
-    return entries, infotexts, shows[0:5], url, image_url
+    return name, entries, infotexts, shows[0:5], url, image_url
 
 
 def get_user_manga_stats(name: str) -> Tuple:
@@ -201,11 +201,12 @@ def get_user_manga_stats(name: str) -> Tuple:
     stats_container = results.find("div", class_="stats manga")
     if not stats_container:
         return False
+    name = results.find("span", class_="di-ib po-r").text.replace("\n", '').strip()
     image_wrapper = results.find("div", class_="user-image mb8")
     image_url = image_wrapper.find("img")["data-src"]
     entries_container = stats_container.find("ul", class_="stats-data fl-r")
     entries = entries_container.find("span", class_="di-ib fl-r").text
-    info_wrapper = stats_container.find("ul", class_="stats-status fl-l")
+    info_wrapper = results.find_all("ul", class_="stats-status fl-l")[1]
     infotexts = []
     infotexts_wrapper = info_wrapper.find_all("li", class_="clearfix mb12")
     for infotext in infotexts_wrapper:
@@ -214,7 +215,7 @@ def get_user_manga_stats(name: str) -> Tuple:
     mangas = []
     favorites_wrapper = results.find("ul", class_="favorites-list manga")
     if not favorites_wrapper:
-        manga = False
+        manga = []
     else:
         favorite_mangas = favorites_wrapper.find_all("li", class_="list di-t mb8")
         for manga in favorite_mangas:
@@ -222,9 +223,6 @@ def get_user_manga_stats(name: str) -> Tuple:
             manga_name = manga_container.find("a").text
             mangas.append(manga_name)
 
-    return entries, infotexts, mangas[0:5], url, image_url
+    return name, entries, infotexts, mangas[0:5], url, image_url
 
-
-print(get_user_manga_stats("HighTen"))
-# print(get_user_anime_stats("Flynch"))
-    
+print(get_user_anime_stats("https"))

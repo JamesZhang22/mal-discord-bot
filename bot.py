@@ -31,7 +31,7 @@ async def help(ctx, cmd=None):
     commands = [command.name for command in bot.commands]
     if not cmd:
         embed = discord.Embed(title="MALBOT'S COMMANDS!", color=discord.Color.blue())
-        embed.add_field(name="Anime Commands", value="?watch\n?ranime\n?details")
+        embed.add_field(name="Anime Commands", value="?watch\n?ranime\n?details\n?user\n?astats\n?mstats")
         embed.add_field(name="Basic Commands", value="?ping\n?clear")
         embed.add_field(name="Music Commands", value="?play\n?leave\n?pause\n?resume\n?stop")
         embed.add_field(name="For More Details", value="?help <command name>", inline=False)
@@ -173,15 +173,56 @@ async def user(ctx, name: str):
     else:
         embed = discord.Embed(title=reply[0], color=discord.Color.blue())
         embed.set_thumbnail(url=reply[1])
-        embed.set_author(name=f"Last Online: {reply[2]}\nJoined: {reply[3]}")
-        embed.add_field(name="Forum Posts", value=reply[4]["Forum Posts"])
-        embed.add_field(name="Reviews", value=reply[4]["Reviews"])
-        embed.add_field(name="Recommendations", value=reply[4]["Recommendations"])
-        embed.add_field(name="Blog Posts", value=reply[4]["Blog Posts"])
-        embed.add_field(name="Clubs", value=reply[4]["Clubs"])
-        embed.add_field(name="Friends", value=reply[5])
-        embed.add_field(name="\u200b", value=reply[6], inline=False)
+        embed.set_author(name=f"Last Online: {reply[2]}")
+        embed.add_field(name="Forum Posts", value=reply[3]["Forum Posts"])
+        embed.add_field(name="Reviews", value=reply[3]["Reviews"])
+        embed.add_field(name="Recommendations", value=reply[3]["Recommendations"])
+        embed.add_field(name="Blog Posts", value=reply[3]["Blog Posts"])
+        embed.add_field(name="Clubs", value=reply[3]["Clubs"])
+        embed.add_field(name="Friends", value=reply[4])
+        embed.add_field(name="\u200b", value=reply[5], inline=False)
     await ctx.send(embed=embed)
+
+
+@bot.command(help="Display the user anime stats.")
+async def astats(ctx, name: str):
+    reply = get_user_anime_stats(name)
+    if not reply:
+        embed = discord.Embed(title='Invalid User', color=discord.Color.red())
+    else:
+        embed = discord.Embed(title=reply[0], color=discord.Color.blue())
+        embed.set_thumbnail(url=reply[5])
+        embed.add_field(name=f"Entries", value=reply[1])
+        embed.add_field(name=f"Watching", value=reply[2][0])
+        embed.add_field(name=f"Completed", value=reply[2][1])
+        embed.add_field(name=f"On-Hold", value=reply[2][2])
+        embed.add_field(name=f"Dropped", value=reply[2][3])
+        embed.add_field(name=f"Plan to Watch", value=reply[2][4])
+        if reply[3] != []:
+            embed.add_field(name="Favorite Shows", value=reply[3])
+        embed.add_field(name="\u200b", value=reply[4], inline=False)
+    await ctx.send(embed=embed)
+
+
+@bot.command(help="Display the user manga stats.")
+async def mstats(ctx, name: str):
+    reply = get_user_manga_stats(name)
+    if not reply:
+        embed = discord.Embed(title='Invalid User', color=discord.Color.red())
+    else:
+        embed = discord.Embed(title=reply[0], color=discord.Color.blue())
+        embed.set_thumbnail(url=reply[5])
+        embed.add_field(name=f"Entries", value=reply[1])
+        embed.add_field(name=f"Reading", value=reply[2][0])
+        embed.add_field(name=f"Completed", value=reply[2][1])
+        embed.add_field(name=f"On-Hold", value=reply[2][2])
+        embed.add_field(name=f"Dropped", value=reply[2][3])
+        embed.add_field(name=f"Plan to Read", value=reply[2][4])
+        if reply[3] != []:
+            embed.add_field(name="Favorite Mangas", value=reply[3])
+        embed.add_field(name="\u200b", value=reply[4], inline=False)
+    await ctx.send(embed=embed)
+
 
 
 bot.run(TOKEN)
