@@ -1,3 +1,4 @@
+from os import stat
 import requests
 from bs4 import BeautifulSoup
 from typing import Dict, List, Tuple
@@ -21,7 +22,7 @@ name_id = create_dict_of_name_id()
 all_genres = ['action', 'adventure', 'cars', 'comedy', 'dementia', 'demons', 'drama', 'ecchi', 'fantasy', 'game', 'harem', 'hentai', 'historical', 'horror', 'josei', 'kids', 'magic', 'martial arts', 'mecha', 'military', 'music', 'mystery', 'parody', 'police', 'psychological', 'romance', 'samurai', 'school', 'sci-fi', 'seinen', 'shoujo', 'shoujo ai', 'shounen', 'shounen ai', 'slice of life', 'space', 'sports', 'super power', 'supernatural', 'thriller', 'vampire', 'yoai', 'yuri']
 
 
-def get_anime_stats(name: str) -> Tuple[str]:
+def get_anime_stats(name: str) -> Tuple:
     name = name.replace("(", '').replace(")", '').lower()
     url = "https://myanimelist.net/anime/" + str(name_id[name])
     page = requests.get(url)
@@ -125,7 +126,7 @@ def get_genre_list(genre: str) -> List[str]:
     return shows
 
 
-def get_user(name: str) -> Tuple[str]:
+def get_user(name: str) -> Tuple:
     url = "https://myanimelist.net/profile/" + name
     page = requests.get(url)
     soup = BeautifulSoup(page.content, "html.parser")
@@ -155,8 +156,75 @@ def get_user(name: str) -> Tuple[str]:
     friends = results.find("a", class_="fl-r fs11 fw-n ff-Verdana").text.replace("All (", "").replace(")", "")
 
 
-    return name, image_url, online, joined, infotexts, friends, url
+    return name, image_url, online, infotexts, friends, url
 
 
-# print(get_user("klu26dsadw"))
+def get_user_anime_stats(name: str) -> Tuple:
+    url = "https://myanimelist.net/profile/" + name
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, "html.parser")
+    results = soup.find(id="contentWrapper")
+
+    stats_container = results.find("div", class_="stats anime")
+    if not stats_container:
+        return False
+    image_wrapper = results.find("div", class_="user-image mb8")
+    image_url = image_wrapper.find("img")["data-src"]
+    entries_container = stats_container.find("ul", class_="stats-data fl-r")
+    entries = entries_container.find("span", class_="di-ib fl-r").text
+    info_wrapper = stats_container.find("ul", class_="stats-status fl-l")
+    infotexts = []
+    infotexts_wrapper = info_wrapper.find_all("li", class_="clearfix mb12")
+    for infotext in infotexts_wrapper:
+        val = infotext.find("span").text
+        infotexts.append(val)
+    shows = []
+    favorites_wrapper = results.find("ul", class_="favorites-list anime")
+    if not favorites_wrapper:
+        shows = False
+    else:
+        favorite_shows = favorites_wrapper.find_all("li", class_="list di-t mb8")
+        for show in favorite_shows:
+            show_container = show.find("div", class_="di-tc va-t pl8 data")
+            show_name = show_container.find("a").text
+            shows.append(show_name)
+
+    return entries, infotexts, shows[0:5], url, image_url
+
+
+def get_user_manga_stats(name: str) -> Tuple:
+    url = "https://myanimelist.net/profile/" + name
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, "html.parser")
+    results = soup.find(id="contentWrapper")
+
+    stats_container = results.find("div", class_="stats manga")
+    if not stats_container:
+        return False
+    image_wrapper = results.find("div", class_="user-image mb8")
+    image_url = image_wrapper.find("img")["data-src"]
+    entries_container = stats_container.find("ul", class_="stats-data fl-r")
+    entries = entries_container.find("span", class_="di-ib fl-r").text
+    info_wrapper = stats_container.find("ul", class_="stats-status fl-l")
+    infotexts = []
+    infotexts_wrapper = info_wrapper.find_all("li", class_="clearfix mb12")
+    for infotext in infotexts_wrapper:
+        val = infotext.find("span").text
+        infotexts.append(val)
+    mangas = []
+    favorites_wrapper = results.find("ul", class_="favorites-list manga")
+    if not favorites_wrapper:
+        manga = False
+    else:
+        favorite_mangas = favorites_wrapper.find_all("li", class_="list di-t mb8")
+        for manga in favorite_mangas:
+            manga_container = manga.find("div", class_="di-tc va-t pl8 data")
+            manga_name = manga_container.find("a").text
+            mangas.append(manga_name)
+
+    return entries, infotexts, mangas[0:5], url, image_url
+
+
+print(get_user_manga_stats("HighTen"))
+# print(get_user_anime_stats("Flynch"))
     
