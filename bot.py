@@ -132,21 +132,24 @@ async def watch(ctx, *question):
 async def ranime(ctx, genre=None):
     reply = random.choice(list(name_id.keys())).replace("!", "").replace("/", '').replace("(", '').replace(")", '')
     if not genre:
-        embed = discord.Embed(title=f"Anime: {get_anime_stats(reply)[0]}", color=discord.Color.blue())
-        embed.set_thumbnail(url=get_anime_stats(reply)[7])
-        embed.add_field(name="Link", value=f"https://myanimelist.net/anime/{name_id[reply]}", inline=False)
+        stats = get_anime_stats(reply)
+        embed = discord.Embed(title=f"Anime: {stats[0]}", color=discord.Color.blue())
+        embed.set_thumbnail(url=stats[7])
+        embed.add_field(name="Link", value=stats[9], inline=False)
         await ctx.send(embed=embed)
     else:
         if genre.lower() in all_genres:
             reply = random.choice(get_genre_list(genre.lower())).replace("!", "").replace("/", '').replace("(", '').replace(")", '')
-            embed = discord.Embed(title=f"Anime: {get_anime_stats(reply)[0]}", color=discord.Color.blue())
+            stats = get_anime_stats(reply)
+            embed = discord.Embed(title=f"Anime: {stats[0]}", color=discord.Color.blue())
             embed.set_author(name=f"Genre: {genre.capitalize()}")
-            embed.set_thumbnail(url=get_anime_stats(reply.lower())[7])
-            embed.add_field(name="Link", value=f"https://myanimelist.net/anime/{name_id[reply.lower()]}", inline=False)
+            embed.set_thumbnail(url=stats[7])
+            embed.add_field(name="Link", value=stats[9], inline=False)
 
             await ctx.send(embed=embed)
         else:
-            await ctx.send("Not a valid genre!")
+            embed = discord.Embed(title="Not a valid genre!", color=discord.Color.red())
+            await ctx.send(embed=embed)
 
 @bot.command(help="Display the anime's stats on myanimelist.")
 async def details(ctx, *show: str):
