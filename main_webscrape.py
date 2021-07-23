@@ -3,6 +3,8 @@ import requests
 from bs4 import BeautifulSoup
 from typing import Dict, List, Tuple
 
+from automation import *
+
 
 def create_dict_of_name_id() -> Dict[int, str]:
     name_id_dict = {}
@@ -24,7 +26,7 @@ all_genres = ['action', 'adventure', 'cars', 'comedy', 'dementia', 'demons', 'dr
 
 def get_anime_stats(name: str) -> Tuple:
     name = name.replace("(", '').replace(")", '').lower()
-    url = "https://myanimelist.net/anime/" + str(name_id[name])
+    url = get_top_result(name)
     page = requests.get(url)
     soup = BeautifulSoup(page.content, "html.parser")
     results = soup.find(id="content")
@@ -43,6 +45,7 @@ def get_anime_stats(name: str) -> Tuple:
     for genre in genres_wrapper:
         if genre.text.lower() in all_genres:
             genres.append(genre.text)
+    genres = genres[0:3]
     genres = ', '.join(genres)
     similars = []
     similar_shows_wrapper = results.find_all("ul", class_="anime-slide js-anime-slide")
@@ -52,13 +55,14 @@ def get_anime_stats(name: str) -> Tuple:
             similar_shows = true_similar_shows_wrapper.find_all("li", class_="btn-anime")
         elif similar_show_wrapper['data-slide'] == "8":
             true_similar_shows_wrapper = similar_show_wrapper
-            similar_shows = true_similar_shows_wrapper.find_all("li", class_="btn-anime auto")
+            similar_shows = true_similar_shows_wrapper.find_all("li", class_="btn-anime")
     for show in similar_shows:
         similars.append(show['title'])
+    similars = similars[0:3]
     similars = ', '.join(similars)
     img_wrapper = results.find("img", alt=true_name)
     img_url= img_wrapper['data-src']
-    desc = results.find("p", itemprop="description").text.replace("\n", '').replace("\r", '').replace("[Written by MAL Rewrite]", '')
+    desc = results.find("p", itemprop="description").text.split("\n")[0]
 
 
     return true_name, rating, rank, popularity, episodes, genres, similars, img_url, desc, url
@@ -224,5 +228,3 @@ def get_user_manga_stats(name: str) -> Tuple:
             mangas.append(manga_name)
 
     return name, entries, infotexts, mangas[0:5], url, image_url
-
-print(get_user_anime_stats("https"))
