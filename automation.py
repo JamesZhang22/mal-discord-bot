@@ -57,5 +57,3 @@ def get_image_character(name: str) -> str:
         driver.quit()
 
     driver.close()
-
-print(get_image_character("levi"))
