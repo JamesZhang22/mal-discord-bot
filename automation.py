@@ -50,9 +50,12 @@ def get_image_character(name: str) -> str:
         soup = BeautifulSoup(page.content, "html.parser")
         results = soup.find(id="content")
         link = results.find("img", class_="lazyload")["data-src"]
-        return link
+
+        return link.replace("/r/42x62", '')
 
     except:
         driver.quit()
 
     driver.close()
+
+print(get_image_character("levi"))
