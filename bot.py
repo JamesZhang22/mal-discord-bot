@@ -33,7 +33,7 @@ async def help(ctx, cmd=None):
     commands = [command.name for command in bot.commands]
     if not cmd:
         embed = discord.Embed(title="MALBOT'S COMMANDS!", color=discord.Color.blue())
-        embed.add_field(name="Anime Commands", value="?watch\n?ranime\n?details\n?user\n?astats\n?mstats")
+        embed.add_field(name="Anime Commands", value="?watch\n?ranime\n?details\n?user\n?astats\n?mstats\nguess")
         embed.add_field(name="Basic Commands", value="?ping\n?clear")
         embed.add_field(name="Music Commands", value="?play\n?leave\n?pause\n?resume\n?stop")
         embed.add_field(name="For More Details", value="?help <command name>", inline=False)
@@ -136,7 +136,9 @@ async def stop(ctx):
 @bot.command(help="8ball for whether or not you should watch a show!")
 async def watch(ctx, *question):
     responses = ['Yes', 'Definetly', 'No', 'NO!', 'Perhaps', 'Go for it!', 'Nah', 'In a week', 'NEVER!', 'WATCH IT RIGHT NOW!']
-    await ctx.send(f"Show: {''.join(question)}\nAnswer: {random.choice(responses)}")
+    embed = embed = discord.Embed(title="8ball", color=discord.Color.blue())
+    embed.add_field(name="Answer", value=random.choice(responses))
+    await ctx.send(embed=embed)
 
 
 @bot.command(help="Recommends a random show (can pass in one genre).")
@@ -238,6 +240,34 @@ async def mstats(ctx, name: str):
             embed.add_field(name="Favorite Mangas", value=reply[3])
         embed.add_field(name="\u200b", value=reply[4], inline=False)
     await ctx.send(embed=embed)
+
+
+@bot.command(help="Guess a random anime character with 3 guesses.")
+async def guess(ctx):
+    character = get_random_character()
+    lower_character = character.lower()
+    try:
+        first_name = lower_character.split(", ")[1]
+    except:
+        first_name = None
+    img = get_image_character(character)
+    
+    embed = discord.Embed(title='Guess', color=discord.Color.blue())
+    embed.set_image(url=img)
+    await ctx.send(embed=embed)
+
+    response = await bot.wait_for('message')
+    guess = str(response.content).lower()
+
+    if guess == lower_character:
+        embed2 = discord.Embed(title='Correct', color=discord.Color.green())
+    elif guess == first_name:
+        embed2 = discord.Embed(title='Correct', color=discord.Color.green())
+    else:
+        embed2 = discord.Embed(title='Incorrect', color=discord.Color.red())
+        embed2.add_field(name=f"Character", value=character.replace(",", ""))
+
+    await ctx.send(embed=embed2)
 
 
 bot.run(TOKEN)
