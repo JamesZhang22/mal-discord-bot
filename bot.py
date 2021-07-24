@@ -20,10 +20,12 @@ players = {}
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
 
+
 @bot.event
 async def on_member_join(member):
     print(f"{member.name} has joined.")
     await member.send(f'Welcome {member.name} to the server!\nUse ?help for more info!')
+
 
 # Custom Help Command
 @bot.command()
@@ -44,6 +46,7 @@ async def help(ctx, cmd=None):
 
     await ctx.send(embed=embed)
 
+
 # Basic Commands
 @bot.command(help="Get bot's latency in milliseconds.")
 async def ping(ctx):
@@ -56,10 +59,12 @@ async def ping(ctx):
         embed = discord.Embed(title="Pong", description = str(ms) + 'ms', color=discord.Color.red())
     await ctx.send(embed=embed)
 
+
 @bot.command(help="Clear chat (can pass in optional value for # of messages).")
 # @commands.has_role("dj")
 async def clear(ctx, amt=5):
     await ctx.channel.purge(limit=amt)
+
 
 # Music Commands
 @bot.command(help="Play a video from youtube.")
@@ -93,6 +98,7 @@ async def play(ctx, url: str):
             os.rename(file, "song.mp3")
     voice.play(discord.FFmpegPCMAudio("song.mp3"))
 
+
 @bot.command(help="Disconnect bot from voice channel.")
 async def leave(ctx):
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
@@ -100,6 +106,7 @@ async def leave(ctx):
         await voice.disconnect()
     else:
         await ctx.send("The bot is not connected to a voice channel.")
+
 
 @bot.command(help="Pause the current video playing.")
 async def pause(ctx):
@@ -109,6 +116,7 @@ async def pause(ctx):
     else:
         await ctx.send("Currently no audio is playing.")
 
+
 @bot.command(help="Resume the current video playing.")
 async def resume(ctx):
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
@@ -117,16 +125,19 @@ async def resume(ctx):
     else:
         await ctx.send("The audio is not paused.")
 
+
 @bot.command(help="Stop the video.")
 async def stop(ctx):
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     voice.stop()
+
 
 # Anime Commands
 @bot.command(help="8ball for whether or not you should watch a show!")
 async def watch(ctx, *question):
     responses = ['Yes', 'Definetly', 'No', 'NO!', 'Perhaps', 'Go for it!', 'Nah', 'In a week', 'NEVER!', 'WATCH IT RIGHT NOW!']
     await ctx.send(f"Show: {''.join(question)}\nAnswer: {random.choice(responses)}")
+
 
 @bot.command(help="Recommends a random show (can pass in one genre).")
 async def ranime(ctx, genre=None):
@@ -151,6 +162,7 @@ async def ranime(ctx, genre=None):
             embed = discord.Embed(title="Not a valid genre!", color=discord.Color.red())
             await ctx.send(embed=embed)
 
+
 @bot.command(help="Display the anime's stats on myanimelist.")
 async def details(ctx, *show: str):
     show = str(show)
@@ -167,6 +179,7 @@ async def details(ctx, *show: str):
     embed.add_field(name="Similar Shows", value=reply[6], inline=False)
     embed.add_field(name="Link", value=reply[9], inline=False)
     await ctx.send(embed=embed)
+
 
 @bot.command(help="Display the user general information.")
 async def user(ctx, name: str):
@@ -225,7 +238,6 @@ async def mstats(ctx, name: str):
             embed.add_field(name="Favorite Mangas", value=reply[3])
         embed.add_field(name="\u200b", value=reply[4], inline=False)
     await ctx.send(embed=embed)
-
 
 
 bot.run(TOKEN)
