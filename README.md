@@ -1,6 +1,7 @@
 # mal-discord-bot
 ## Features
 - Webscrabe anime info, user info and more from myanimelist.net
+- Has games where you can guess characters and ask the bot question
 - Do basic chat moderation
 - Play music
 
