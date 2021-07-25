@@ -33,7 +33,7 @@ async def help(ctx, cmd=None):
     commands = [command.name for command in bot.commands]
     if not cmd:
         embed = discord.Embed(title="MALBOT'S COMMANDS!", color=discord.Color.blue())
-        embed.add_field(name="Anime Commands", value="?watch\n?ranime\n?details\n?user\n?astats\n?mstats\nguess")
+        embed.add_field(name="Anime Commands", value="?watch\n?ranime\n?details\n?user\n?astats\n?mstats\n?guess")
         embed.add_field(name="Basic Commands", value="?ping\n?clear")
         embed.add_field(name="Music Commands", value="?play\n?leave\n?pause\n?resume\n?stop")
         embed.add_field(name="For More Details", value="?help <command name>", inline=False)
@@ -248,6 +248,7 @@ async def guess(ctx):
     lower_character = character.lower()
     try:
         first_name = lower_character.split(", ")[1]
+        last_name = lower_character.split(", ")[0]
     except:
         first_name = None
     img = get_image_character(character)
@@ -259,9 +260,13 @@ async def guess(ctx):
     response = await bot.wait_for('message')
     guess = str(response.content).lower()
 
-    if guess == lower_character:
+    if guess == lower_character.replace(",", ''):
         embed2 = discord.Embed(title='Correct', color=discord.Color.green())
     elif guess == first_name:
+        embed2 = discord.Embed(title='Correct', color=discord.Color.green())
+    elif guess == last_name:
+        embed2 = discord.Embed(title='Correct', color=discord.Color.green())
+    elif guess == f"{first_name} {last_name}":
         embed2 = discord.Embed(title='Correct', color=discord.Color.green())
     else:
         embed2 = discord.Embed(title='Incorrect', color=discord.Color.red())
